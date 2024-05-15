@@ -1,0 +1,316 @@
+{% include 'master_cabecera.html' %}
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+  
+<table border=1>
+    <tr>
+        <td style="width:300px"></td>
+        <td>IdRegion</td>
+        <td><input id="txIdRegion"
+                   name = "txIdRegion"
+                   maxlength="10"
+                   type="text"
+                   value="1"
+                   >
+                </td>
+    </tr>    
+    <tr>
+        <td style="width:300px"></td>
+        <td>Código</td>
+        <td><input id="txCodigo"
+                   name = "txCodigo"
+                   maxlength="10"
+                   type="text"
+                   value="1"
+                   >
+                </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Nombre</td>
+        <td><input id="txNombre"
+                   name = "txNombre"
+                   maxlength="30"
+                   size="30"
+                   type="text"
+                   value="Region Metropolina "
+                   >
+                </td>
+    </tr>
+  
+    <tr>
+        <td></td>
+            <td  colspan="2">
+                <button id="btLeer"   onclick="javascript:regionLeer()">Leer</button>        
+                <button disabled id="btModificar" onclick="javascript:regionActualizar()">Modificar</button>        
+                <button disabled id="btAgregar" onclick="javascript:regionAgregar()">Agregar</button>        
+                <button disabled id="btEliminar" onclick="javascript:regionEliminar()">Eliminar</button>        
+                <button disabled id="btLimpiar" onclick="javascript:limpiar()">Limpiar</button>        
+        </td>
+    </tr>                     
+    <tr>
+        <td></td>
+            <td  colspan="2">
+                <button id="btListarArr" onclick="javascript:empleadoListarArreglo()">ListarArreglo</button>        
+                <button id="btListarArr" onclick="javascript:regionListarInnerHtml()">Listar Inner  Html</button> 
+                <!-- <button id="btListarArr" onclick="javascript:empleadoListarHtmlPython()">Listar Html Python</button> 
+                <button id="btListarArr" onclick="javascript:empleadoListarHtmlViews()">Listar Html Views</button>  -->
+        </td>
+    </tr>                     
+</table>    
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+
+
+<form method="POST" action="/puebla">
+</form>
+
+
+
+
+<div id="objInner">Reescribiremos este código</div>
+
+
+
+
+{% include "master_pie.html" %}
+
+
+<script>
+    // Definimos la parte fija de la Url
+    var url_api= 'http://localhost:9010/ventas/restfull/'    
+
+    function regionAgregar(){
+        var parametros=""
+        // Creo Datos para enviar tipo Para Form
+        // parametros = "p_rut=" + document.getElementById("txRut").value;
+        // parametros += "&p_nombre=" + document.getElementById("txNombres").value;
+        // parametros += "&p_paterno=" + document.getElementById("txPaterno").value;
+        // parametros += "&p_materno=" + document.getElementById("txMaterno").value;
+        // parametros += "&p_email=" + document.getElementById("txEmail").value;
+
+        // Creo Texto con los datos en formato json
+        parametros = "{"
+        parametros += ' "codigo":"' + document.getElementById('txCodigo').value + '"';
+        parametros += ',"nombre":"' + document.getElementById('txNombre').value+ '"';
+        parametros += ',"idRegion":"' + document.getElementById('txIdRegion').value+ '"';
+        parametros += "}"
+        //alert("hola" + parametros)
+        //*********** Ejecuto Ajax Sincrónico
+        $.ajax({
+            type: "POST",      // GET, PUT, POST, DELETE
+            data: parametros,  // Envio deParámetro
+            async: false,      // Sincrónico
+            url: url_api + 'region/'  ,  // Url de la API
+            cache: false,
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' + data);
+            },
+            success: function (data) {
+                alert("Success" + data)
+                json = data;
+            }
+        });
+    }
+    function regionActualizar(){
+        var parametros=""
+        // Creo Texto con los datos en formato json
+        parametros = "{"
+        parametros += ' "codigo":"' + document.getElementById('txCodigo').value + '"';
+        parametros += ',"nombre":"' + document.getElementById('txNombre').value+ '"';
+        parametros += "}"
+        //alert("hola" + parametros)
+        //*********** Ejecuto Ajax Sincrónico
+        $.ajax({
+            type: "PUT",      // GET, PUT, POST, DELETE
+            data: parametros,  // Envio deParámetro
+            async: false,      // Sincrónico
+            url: url_api + 'region/' +  document.getElementById('txIdRegion').value  ,  // Url de la API
+            cache: false,
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' + JSON.stringify(data));
+            },
+            success: function (data) {
+                alert("Success" + JSON.stringify(data))
+                json = data;
+            }
+        });
+    }
+
+    function regionLeer(){
+        // No Tiene parametros
+        //*********** Ejecuto Ajax Sincrónico
+        var pathUrl= url_api + 'region/' +  document.getElementById('txIdRegion').value
+        $.ajax({
+            type: "GET",      // GET, PUT, POST, DELETE
+            async: false,      // Sincrónico
+            url:pathUrl  ,  // Observe que agrego el rut
+            cache: false,
+            //contentType: "application/json; charset=utf-8",
+            // crossDomain:true,  // Si no se coloca da error, diferentes host
+            // headers: { // Bloqueado por CORS
+            //         'Access-Control-Allow-Origin': '*',
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/json;charset=UTF-8',
+            //         'Access-Control-Allow-Methods': '*',
+            //         'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Content-Type, Authorization',
+            //         },            
+            //format: "json",
+
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' +JSON.stringify(data));
+            },
+            success: function (data) {
+                //alert("Success" + data)
+                json = data;
+                document.getElementById('txCodigo').value = json.codigo
+                document.getElementById('txNombre').value = json.nombre
+                habilitaLeer();
+            }
+        });
+    }
+    function regionEliminar(){
+        var pathUrl= url_api + 'region/' +  document.getElementById('txIdRegion').value
+        $.ajax({
+            type: "DELETE",      // GET, PUT, POST, DELETE
+            async: false,      // Sincrónico
+            url:pathUrl  ,  // Observe que agrego el rut
+            cache: false,
+            //contentType: "application/json; charset=utf-8",
+            //crossDomain:true,  // Si no se coloca da error, diferentes host
+            //format: "json",
+
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' +JSON.stringify(data));
+            },
+            success: function (data) {
+                alert("Success" + JSON.stringify(data))
+                json = data;
+                limpiar()
+                regionListarInnerHtml()
+            }
+        });
+    }
+    function regionListarArreglo(){
+        var pathUrl= url_api + 'persona/'
+        $.ajax({
+            type: "GET",      // GET, PUT, POST, DELETE
+            async: false,      // Sincrónico
+            url:pathUrl  ,  // Observe que agrego el rut
+            cache: false,
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' +JSON.stringify(data));
+            },
+            success: function (data) {
+                //alert("Success" + data)
+                for(var x=0;x<data.length;x++){
+                       alert(data[x].rut + ":" + data[x].nombre+ ":" + data[x].papellido) 
+                }
+            }
+        });
+
+    }
+    function regionListarInnerHtml(){
+        var pathUrl= url_api + 'region/'
+        $.ajax({
+            type: "GET",      // GET, PUT, POST, DELETE
+            async: false,      // Sincrónico
+            url:pathUrl  ,  // Observe que agrego el rut
+            cache: false,
+            dataType: "json",             // Formato de envio
+            beforeSend: function (data){
+                // Método de ejecuta antes de enviar
+                console.log('... cargando...');
+            }
+            , error: function (data) {
+                //alert("Error " + data)
+                //si hay un error mostramos un mensaje
+                console.log('Tenemos problemas Houston ' +JSON.stringify(data));
+            },
+            success: function (data) {
+                //alert("Success" + data)
+                var stHtml = "<br><br><br><table border='1'>"
+                for(var x=0;x<data.length;x++){
+                       stHtml += "<tr>"
+                       stHtml += "<td style='width:350px'></td>"
+                       stHtml += "<td>" + data[x].idRegion  + "</td>"
+                       stHtml += "<td>" + data[x].codigo  + "</td>"
+                       stHtml += "<td>" + data[x].nombre  + "</td>"
+
+                       stHtml += "</tr>"
+                }
+                stHtml += "</table>"
+                //alert(stHtml)
+                document.getElementById("objInner").innerHTML = stHtml
+            }
+        });
+
+    }
+    function regionListarHtmlPython(){
+
+    }
+    function habilitaLeer(){
+        document.getElementById('btLeer').disabled=true
+        document.getElementById('btModificar').disabled=false
+        document.getElementById('btAgregar').disabled=false
+        document.getElementById('btEliminar').disabled=false
+        document.getElementById('btLimpiar').disabled=false
+    }
+    function limpiar() {
+        //document.getElementById('txRut').value = ""
+        document.getElementById('txCodigo').value = ""
+        document.getElementById('txNombre').value = ""
+        document.getElementById('btLeer').disabled=false
+        document.getElementById('btModificar').disabled=true
+        document.getElementById('btAgregar').disabled=true
+        document.getElementById('btEliminar').disabled=true
+        document.getElementById('btLimpiar').disabled=true
+        
+    }
+</script>    
